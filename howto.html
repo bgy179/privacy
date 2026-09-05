@@ -14,3 +14,10 @@
     您的浏览器不支持视频标签。
   </video>
 </div>
+
+<script>
+  const video = document.getElementById('myVideo');
+  video.addEventListener('loadedmetadata', function() {
+    video.playbackRate = 2.0;
+  });
+</script>
