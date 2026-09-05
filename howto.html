@@ -1,6 +1,15 @@
 
+<style>
+  .responsive-video {
+    max-width: 100%;
+    max-height: 80vh;   /* 不超过视口高度的80% */
+    width: auto;
+    height: auto;
+  }
+</style>
+
 <div style="display: flex; justify-content: center;">
-  <video controls style="width: 100%; max-width: 500px;">
+  <video class="responsive-video" controls>
     <source src="c53a9dce0c7b0d7bee691a61b65135b5.mp4" type="video/mp4">
     您的浏览器不支持视频标签。
   </video>
