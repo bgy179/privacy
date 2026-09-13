@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>下载 SunDial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #10202E;
+    --sky-deep: #0A161F;
+    --sand: #F2E9D8;
+    --sand-dim: #C9BCA3;
+    --gold: #E8A94A;
+    --gold-dim: #B9843A;
+    --rule: rgba(242, 233, 216, 0.14);
+    --radius: 3px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--sky);
+    color: var(--sand);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; margin: 0; }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Hero: sundial gnomon casting a moving shadow ---------- */
+
+  .hero {
+    position: relative;
+    padding: 96px 0 72px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(232,169,74,0.16), transparent 60%);
+    pointer-events: none;
+  }
+
+  .dial {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 48px;
+    aspect-ratio: 2 / 1.05;
+  }
+
+  .dial svg { width: 100%; height: 100%; display: block; }
+
+  .gnomon-shadow {
+    transform-origin: 200px 180px;
+    animation: sweep 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes sweep {
+    0%   { transform: rotate(-34deg); opacity: 0.9; }
+    100% { transform: rotate(34deg);  opacity: 0.55; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gnomon-shadow { animation: none; transform: rotate(0deg); }
+  }
+
+  .hero h1 {
+    text-align: center;
+    font-size: clamp(2.4rem, 5vw, 3.4rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--sand);
+  }
+
+  .hero p.lede {
+    text-align: center;
+    max-width: 46ch;
+    margin: 18px auto 0;
+    color: var(--sand-dim);
+    font-size: 1.05rem;
+  }
+
+  /* ---------- Platform downloads ---------- */
+
+  .platforms {
+    padding: 64px 0 16px;
+  }
+
+  .platforms h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .platforms .sub {
+    color: var(--sand-dim);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+  }
+
+  .platform-row {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--rule);
+  }
+
+  .platform {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 4px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .platform .icon {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    color: var(--gold);
+  }
+
+  .platform .icon svg { width: 100%; height: 100%; }
+
+  .platform .meta {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .platform .meta .name {
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .platform .meta .detail {
+    color: var(--sand-dim);
+    font-size: 0.88rem;
+    margin-top: 2px;
+  }
+
+  .platform .get {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    background: var(--gold);
+    color: var(--sky-deep);
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: background 0.15s ease;
+  }
+
+  .platform .get:hover { background: #f2bb6a; }
+
+  .platform.unavailable .get {
+    background: transparent;
+    color: var(--sand-dim);
+    border: 1px solid var(--rule);
+    pointer-events: none;
+  }
+
+  /* ---------- Checksums / verify note ---------- */
+
+  .verify {
+    margin-top: 28px;
+    font-size: 0.85rem;
+    color: var(--sand-dim);
+  }
+
+  .verify code {
+    background: rgba(242,233,216,0.08);
+    padding: 2px 6px;
+    border-radius: var(--radius);
+    font-size: 0.82em;
+  }
+
+  /* ---------- Version history ---------- */
+
+  .history {
+    padding: 56px 0 96px;
+  }
+
+  .history h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 24px;
+    padding: 20px 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .entry:last-child { border-bottom: 1px solid var(--rule); }
+
+  .entry .version {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+
+  .entry .date {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--sand-dim);
+    margin-top: 4px;
+  }
+
+  .entry .notes {
+    font-size: 0.94rem;
+    color: var(--sand-dim);
+  }
+
+  .entry .notes strong { color: var(--sand); font-weight: 500; }
+
+  .entry .notes ul {
+    margin: 6px 0 0;
+    padding-left: 18px;
+  }
+
+  .entry .notes li { margin: 3px 0; }
+
+  .entry .all-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.9rem;
+    color: var(--sand-dim);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 28px 0 48px;
+    font-size: 0.82rem;
+    color: var(--sand-dim);
+    text-align: center;
+  }
+
+  @media (max-width: 560px) {
+    .entry { grid-template-columns: 1fr; gap: 4px; }
+    .platform { flex-wrap: wrap; }
+    .platform .get { margin-left: 54px; }
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="dial" aria-hidden="true">
+        <svg viewBox="0 0 400 210">
+          <ellipse cx="200" cy="180" rx="190" ry="22" fill="none" stroke="rgba(242,233,216,0.18)" stroke-width="1.5"/>
+          <!-- hour ticks -->
+          <g stroke="rgba(242,233,216,0.3)" stroke-width="2" stroke-linecap="round">
+            <line x1="40"  y1="180" x2="40"  y2="172"/>
+            <line x1="90"  y1="180" x2="90"  y2="174"/>
+            <line x1="140" y1="180" x2="140" y2="174"/>
+            <line x1="200" y1="180" x2="200" y2="170"/>
+            <line x1="260" y1="180" x2="260" y2="174"/>
+            <line x1="310" y1="180" x2="310" y2="174"/>
+            <line x1="360" y1="180" x2="360" y2="172"/>
+          </g>
+          <g class="gnomon-shadow">
+            <polygon points="200,180 200,44 214,180" fill="rgba(232,169,74,0.28)"/>
+            <line x1="200" y1="180" x2="200" y2="44" stroke="#E8A94A" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <circle cx="200" cy="180" r="5" fill="#E8A94A"/>
+        </svg>
+      </div>
+
+      <h1>SunDial</h1>
+      <p class="lede">一个安静地跟随光线走动的计时应用。选择你的平台,开始使用。</p>
+    </div>
+  </section>
+
+  <section class="platforms">
+    <div class="wrap">
+      <h2>下载</h2>
+      <p class="sub">当前版本 v1.2.0 · 2026 年 9 月 13 日发布</p>
+
+      <div class="platform-row">
+        <div class="platform">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5 10.5 4.4v7.3H3zm0 13L10.5 19.6v-7.2H3zm8.4-14.2L21 3v8.7h-9.6zm0 8.9H21V21l-9.6-1.3z"/></svg>
+          </span>
+          <div class="meta">
+            <div class="name">Windows</div>
+            <div class="detail">64 位 · Windows 10 及以上</div>
+          </div>
+          <a class="get" href="https://github.com/yourname/sundial/releases/latest/download/SunDial-Setup.exe" download>
+            下载 .exe
+          </a>
+        </div>
+
+        <div class="platform">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.365 1.43c0 1.14-.462 2.096-1.34 2.977-.92.94-2.06 1.48-3.2 1.39-.13-1.11.46-2.28 1.31-3.14.87-.9 2.26-1.55 3.23-1.6zm4.11 15.5c-.4.94-.87 1.82-1.42 2.63-.75 1.1-1.36 1.86-1.83 2.28-.72.68-1.5 1.03-2.32 1.05-.6.01-1.31-.17-2.14-.53-.83-.36-1.6-.53-2.29-.53-.72 0-1.5.17-2.34.53-.85.36-1.53.55-2.05.57-.79.03-1.58-.33-2.36-1.08-.51-.46-1.15-1.25-1.92-2.37-.83-1.22-1.51-2.63-2.05-4.24-.58-1.75-.87-3.44-.87-5.08 0-1.87.4-3.49 1.21-4.83.63-1.08 1.47-1.93 2.52-2.56 1.05-.63 2.18-.95 3.4-.97.63 0 1.45.2 2.47.6.99.4 1.63.6 1.9.6.2 0 .9-.24 2.08-.71 1.14-.44 2.1-.62 2.88-.56 2.13.17 3.73.99 4.79 2.46-1.9 1.15-2.85 2.76-2.83 4.83.02 1.61.6 2.95 1.74 4.01.52.49 1.1.87 1.74 1.14-.14.4-.29.79-.45 1.15z"/></svg>
+          </span>
+          <div class="meta">
+            <div class="name">macOS</div>
+            <div class="detail">通用二进制 · macOS 12 及以上</div>
+          </div>
+          <a class="get" href="https://github.com/yourname/sundial/releases/latest/download/SunDial.dmg" download>
+            下载 .dmg
+          </a>
+        </div>
+
+        <div class="platform">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.5 2c-.9 0-1.6.7-1.6 1.6v3.2c-1.2.4-2.2 1.2-2.9 2.3H5.4c-.5 0-.9.4-.9.9s.4.9.9.9h1.9c-.1.4-.2.9-.2 1.3 0 2.9 2.6 5.3 5.9 5.3s5.9-2.4 5.9-5.3c0-.5-.1-.9-.2-1.3h1.9c.5 0 .9-.4.9-.9s-.4-.9-.9-.9h-2.6c-.7-1.1-1.7-1.9-2.9-2.3V3.6c0-.9-.7-1.6-1.6-1.6z"/></svg>
+          </span>
+          <div class="meta">
+            <div class="name">Linux</div>
+            <div class="detail">AppImage · x86_64</div>
+          </div>
+          <a class="get" href="https://github.com/yourname/sundial/releases/latest/download/SunDial.AppImage" download>
+            下载 AppImage
+          </a>
+        </div>
+
+        <div class="platform unavailable">
+          <span class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 17a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+          </span>
+          <div class="meta">
+            <div class="name">iOS / Android</div>
+            <div class="detail">正在开发中</div>
+          </div>
+          <span class="get">敬请期待</span>
+        </div>
+      </div>
+
+      <p class="verify">
+        校验安装包完整性:每个发布版本的 SHA-256 校验值列在
+        <a href="https://github.com/yourname/sundial/releases" style="border-bottom:1px solid var(--rule)">对应 Release 页面</a>
+        下方,下载后可用 <code>shasum -a 256</code>(macOS/Linux)或 <code>certutil -hashfile 文件名 SHA256</code>(Windows)核对。
+      </p>
+    </div>
+  </section>
+
+  <section class="history">
+    <div class="wrap">
+      <h2>更新记录</h2>
+
+      <div class="entry">
+        <div class="version">v1.2.0<span class="date">2026-09-13</span></div>
+        <div class="notes">
+          <strong>新增</strong>
+          <ul>
+            <li>日出日落时间自动跟随系统定位刷新</li>
+            <li>支持深色 / 浅色两种表盘主题</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="entry">
+        <div class="version">v1.1.2<span class="date">2026-06-02</span></div>
+        <div class="notes">修复了跨越夏令时切换时,指针角度计算错误的问题。</div>
+      </div>
+
+      <div class="entry">
+        <div class="version">v1.1.0<span class="date">2026-03-18</span></div>
+        <div class="notes">
+          <strong>新增</strong>
+          <ul>
+            <li>Linux 平台首次支持(AppImage)</li>
+          </ul>
+        </div>
+      </div>
+
+      <a class="all-link" href="https://github.com/yourname/sundial/releases">查看全部历史版本 →</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      SunDial 是开源项目 · <a href="https://github.com/yourname/sundial">在 GitHub 上查看源码</a>
+    </div>
+  </footer>
+
+</body>
+</html>
