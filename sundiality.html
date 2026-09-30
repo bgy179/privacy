@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sundiality</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f7;--panel:#fff;--ink:#1b2733;--muted:#5d6b78;--line:#d5dce2;--accent:#0f6b6b;--accent-ink:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#12181e;--panel:#1a222a;--ink:#e6ebef;--muted:#93a1ad;--line:#2b3641;--accent:#4fb3b3;--accent-ink:#0b1114}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:48px 20px 64px}
+h1{font-size:2rem;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+.lead{color:var(--muted);margin:0 0 28px;max-width:60ch}
+.tools{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+input[type=search]{flex:1 1 240px;padding:10px 12px;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips button{font:inherit;font-size:.9rem;padding:8px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
+.chips button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+ul{list-style:none;margin:0;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+li{display:grid;grid-template-columns:1fr auto;gap:8px 20px;align-items:center;padding:18px 20px;border-top:1px solid var(--line)}
+li:first-child{border-top:0}
+.name{font-weight:600}
+.ver{color:var(--muted);font-weight:400;margin-left:8px;font-size:.9rem}
+.desc{margin:2px 0 6px;color:var(--muted);font-size:.95rem}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.85rem;color:var(--muted)}
+.meta button{all:unset;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.meta button:focus-visible{outline:2px solid var(--accent)}
+a.dl{background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:500;padding:10px 16px;border-radius:6px;white-space:nowrap}
+a.dl:hover{filter:brightness(1.08)}
+.empty{padding:32px 20px;text-align:center;color:var(--muted)}
+@media (max-width:560px){li{grid-template-columns:1fr}a.dl{text-align:center}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Downloads</h1>
+  <p class="lead">Pick a package, check that it matches your system, and download it.</p>
+  <div class="tools">
+    <input type="search" id="q" placeholder="Search packages" aria-label="Search packages">
+    <div class="chips" id="chips" role="group" aria-label="Filter by platform"></div>
+  </div>
+  <ul id="list" aria-live="polite"></ul>
+</main>
+
+<script>
+// ===== Edit this list: one object per package =====
+const PACKAGES = [
+  { name: "Sundial Messaging", version: "2.4.1", platform: "Android", size: "48 MB", date: "2026-09-12",
+    description: "Command-line and GUI installer for Windows 10 and later.",
+    url: "SunDialMsg.apk", sha256: "" },
+  { name: "Sundial Editor", version: "2.4.1", platform: "Android", size: "52 MB", date: "2026-09-12",
+    description: "Universal build for Apple silicon and Intel.",
+    url: "SundiaEditor.apk", sha256: "" },
+  { name: "Sundial Vector", version: "2.4.1", platform: "Android", size: "39 MB", date: "2026-09-12",
+    description: "Portable tarball for x86_64 distributions.",
+    url: "SundialVector.apk", sha256: "" },
+  { name: "Example SDK", version: "1.0.3", platform: "Any", size: "6 MB", date: "2026-08-30",
+    description: "Libraries and headers for building on top of Example Tool.",
+    url: "example-sdk-1.0.3.zip", sha256: "" }
+];
+// ==================================================
+
+const $ = s => document.querySelector(s);
+const list = $("#list"), q = $("#q"), chips = $("#chips");
+let platform = "All";
+
+const platforms = ["All", ...new Set(PACKAGES.map(p => p.platform))];
+platforms.forEach(p => {
+  const b = document.createElement("button");
+  b.textContent = p; b.type = "button";
+  b.setAttribute("aria-pressed", p === platform);
+  b.onclick = () => { platform = p; [...chips.children].forEach(c => c.setAttribute("aria-pressed", c === b)); render(); };
+  chips.appendChild(b);
+});
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function render() {
+  const term = q.value.trim().toLowerCase();
+  const rows = PACKAGES.filter(p =>
+    (platform === "All" || p.platform === platform) &&
+    (!term || (p.name + " " + p.description + " " + p.version).toLowerCase().includes(term)));
+  if (!rows.length) { list.innerHTML = '<li class="empty">No packages match. Clear the search or choose another platform.</li>'; return; }
+  list.innerHTML = rows.map((p, i) => `
+    <li>
+      <div>
+        <div><span class="name">${esc(p.name)}</span><span class="ver">v${esc(p.version)}</span></div>
+        <p class="desc">${esc(p.description)}</p>
+        <div class="meta">
+          <span>${esc(p.platform)}</span><span>${esc(p.size)}</span><span>Released ${esc(p.date)}</span>
+          ${p.sha256 ? `<button type="button" data-hash="${esc(p.sha256)}">Copy SHA-256</button>` : ""}
+        </div>
+      </div>
+      <a class="dl" href="${esc(p.url)}" download aria-label="Download ${esc(p.name)} ${esc(p.version)} for ${esc(p.platform)}">Download</a>
+    </li>`).join("");
+}
+list.addEventListener("click", e => {
+  const b = e.target.closest("[data-hash]");
+  if (!b) return;
+  navigator.clipboard.writeText(b.dataset.hash).then(() => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy SHA-256", 1500); });
+});
+q.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>
